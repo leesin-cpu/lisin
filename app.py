@@ -128,7 +128,7 @@ def load_question_bank():
     return db
 
 # ==========================================
-# 🎨 終極 UI 渲染邏輯 (海洋原民風格版)
+# 🎨 UI 渲染邏輯
 # ==========================================
 def render_mcq(line, prefix):
     """渲染選擇題"""
@@ -207,7 +207,7 @@ def render_reading(line, prefix):
         st.markdown(f"📖 **{q_part}**")
         if ch_part:
             if st.toggle("💡 顯示中文翻譯", key=f"t_{prefix}"):
-                st.success(f"🌊 **中文語意：** {ch_part}")
+                st.success(f"🌾 **中文語意：** {ch_part}")
     except Exception:
         st.info(line)
 
@@ -373,7 +373,7 @@ def render_section(section_name, db):
 
     for i, line in enumerate(questions):
         with st.container():
-            st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
+            st.markdown('<div class="amis-card">', unsafe_allow_html=True)
             if "聽音選詞" in section_name or "對話理解" in section_name or section_name in ["詞彙語意", "語言結構"]:
                 render_mcq(line, f"{section_name}_{i}")
             elif section_name == "段落朗讀":
@@ -390,92 +390,108 @@ def render_section(section_name, db):
 # 🚀 應用程式主邏輯 (Main)
 # ==========================================
 def main():
-    st.set_page_config(page_title="海洋原民風｜中高級認證", page_icon="🌊", layout="centered", initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="阿美族原民風｜中高級認證", page_icon="🌾", layout="centered", initial_sidebar_state="collapsed")
 
-    # 🌊 海洋原民風格 (Ocean Indigenous Style) 自訂 CSS
+    # 🌾 阿美族圖騰風格 (Amis Tribal Style) CSS 設計
     st.markdown("""
     <style>
-    /* 全域背景色及字型主題 */
+    /* 全域背景色 */
     .stApp {
-        background-color: #F0F4F8;
+        background-color: #F8F6F0;
         font-family: 'Helvetica Neue', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     }
 
-    /* 頂部 Header 浪潮裝飾 */
-    .ocean-header {
-        background: linear-gradient(135deg, #0D253F 0%, #1F4E79 50%, #2E75B6 100%);
-        padding: 30px 20px;
+    /* 阿美族經典頂部 Header 樣式 */
+    .amis-header {
+        background: linear-gradient(135deg, #1C2833 0%, #C0392B 60%, #900C3F 100%);
+        padding: 32px 20px 24px 20px;
         border-radius: 16px;
         color: #FFFFFF;
         text-align: center;
-        box-shadow: 0 6px 20px rgba(13, 37, 63, 0.25);
+        box-shadow: 0 8px 24px rgba(192, 57, 43, 0.25);
         margin-bottom: 25px;
-        border-bottom: 4px solid #E0A96D; /* 暖沙金底邊 */
+        position: relative;
+        border-bottom: 5px solid #D4AC0D; /* 暖金裝飾條 */
     }
-    
-    .ocean-header h1 {
+
+    /* Header 幾何菱形圖騰紋樣條 */
+    .amis-pattern {
+        height: 10px;
+        background: repeating-linear-gradient(
+            45deg,
+            #D4AC0D,
+            #D4AC0D 10px,
+            #C0392B 10px,
+            #C0392B 20px,
+            #FFFFFF 20px,
+            #FFFFFF 30px
+        );
+        border-radius: 4px;
+        margin-bottom: 15px;
+        opacity: 0.9;
+    }
+
+    .amis-header h1 {
         color: #FFFFFF !important;
-        font-weight: 700;
-        letter-spacing: 2px;
-        margin-bottom: 8px;
+        font-weight: 800;
+        letter-spacing: 2.5px;
+        margin-bottom: 6px;
+        font-size: 2.1rem;
     }
 
-    .ocean-header p {
-        color: #D0E1F9;
-        font-size: 0.95rem;
+    .amis-header p {
+        color: #FADBD8;
+        font-size: 0.98rem;
+        letter-spacing: 1px;
     }
 
-    /* 測驗題目卡片 - 部落圖騰邊框 */
-    .quiz-card {
+    /* 題目卡片 - 部落圖騰邊框 */
+    .amis-card {
         background-color: #FFFFFF;
         padding: 26px;
         border-radius: 14px;
-        border-left: 6px solid #1F4E79; /* 湛藍主題線 */
-        border-top: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        border-bottom: 1px solid #E2E8F0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-left: 6px solid #C0392B; /* 阿美紅核心線 */
+        border-top: 1px solid #EAEDED;
+        border-right: 1px solid #EAEDED;
+        border-bottom: 1px solid #EAEDED;
+        box-shadow: 0 4px 16px rgba(28, 40, 51, 0.06);
         margin-top: 18px;
         margin-bottom: 25px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .quiz-card:hover {
+    .amis-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 22px rgba(31, 78, 121, 0.12);
-        border-left-color: #E0A96D; /* 懸停時轉為溫暖沙金線 */
+        box-shadow: 0 8px 24px rgba(192, 57, 43, 0.15);
+        border-left-color: #D4AC0D; /* Hover 時轉換為太陽金線 */
     }
 
-    /* 調整切換開關與單選鈕的文字色彩 */
+    /* 單選鈕與切換開關的標籤樣式 */
     div[class*="stRadio"] label, div[class*="stToggle"] label {
-        color: #1A365D !important;
+        color: #1C2833 !important;
         font-weight: 600;
     }
 
-    /* 美化提示與成功訊息框 */
-    .stAlert {
-        border-radius: 10px;
-    }
-
     /* 底部版權宣告 */
-    .ocean-footer {
+    .amis-footer {
         text-align: center;
-        color: #5A6A85;
+        color: #7F8C8D;
         font-size: 0.85rem;
         padding: 20px 0;
     }
 
     hr { 
-        border-top: 2px dashed #CBD5E1; 
+        border-top: 2px dashed #BDC3C7; 
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # 🌊 海洋風格 Title Header
+    # 🌾 阿美族圖騰風 Title Header
     st.markdown("""
-    <div class="ocean-header">
-        <h1>🌊 族語中高級認證學習平台</h1>
-        <p>⟨ Riyar ato Serangawan ⟩ 海洋與文化的傳播之旅</p>
+    <div class="amis-header">
+        <div class="amis-pattern"></div>
+        <h1>🌾 阿美族語中高級認證學習平台</h1>
+        <p>⟨ O 'Amihai no 'Orip ⟩ 傳承部落文化與語言之美</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -497,7 +513,7 @@ def main():
     if current_tab == "📋 認證考試說明":
         st.subheader("📋 [認證考試說明簡章下載](https://lokahsu.ilrdf.org.tw/web_lokahsu/Files/Guide/1_20251211_162558.pdf)")
         st.divider()
-        st.info("💡 歡迎使用海洋原民風格認證學習系統。請透過上方導覽列選擇您要進行練習的測驗項目。系統將自動載入完整的考題庫。")
+        st.info("💡 歡迎使用阿美族圖騰風格認證學習系統。請透過上方選單切換測驗項目，系統將自動讀取並顯示考題與解析。")
 
     elif current_tab == "🎧 聽力":
         st.subheader("🎧 聽力測驗 (pitengil)")
@@ -539,8 +555,8 @@ def main():
 
     st.write("---")
     st.markdown(f"""
-    <div class="ocean-footer">
-        © 2026 中高級認證 App 三一開發團隊 ｜ 系統版本：<b>{APP_VERSION}</b>
+    <div class="amis-footer">
+        © 2026 阿美族語中高級認證 App 三一開發團隊 ｜ 系統版本：<b>{APP_VERSION}</b>
     </div>
     """, unsafe_allow_html=True)
 
